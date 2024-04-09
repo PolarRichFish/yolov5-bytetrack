@@ -2,4 +2,7 @@
 *.mp4
 runs
 weights
+*.jpg
+*.png
+*.jepg
 

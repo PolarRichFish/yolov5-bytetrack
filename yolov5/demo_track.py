@@ -31,12 +31,12 @@ post_time = 0
 def make_parser():
     parser = argparse.ArgumentParser("ByteTrack Demo!")
     parser.add_argument(
-        "--demo", default="image", help="demo type, eg. image, video and webcam"
+        "--demo", default="video", help="demo type, eg. image, video and webcam"
     )
     parser.add_argument("-n", "--name", type=str, default=None, help="model name")
 
     parser.add_argument(
-        "--path", default=r"F:\work_space\pe_car_detect\yolov5v6_bytetrack\yolov5\images", help="path to images or video"
+        "--path", default=r"../data/stu_02.mp4", help="path to images or video"
         # "--path", default="./videos/16h-17h.mp4", help="path to images or video"
     )
     parser.add_argument("--camid", type=int, default=0, help="webcam demo camera id")
@@ -53,17 +53,18 @@ def make_parser():
         help="save name for results txt/video",
     )
 
-    parser.add_argument("-c", "--ckpt", default=r"F:\work_space\pe_car_detect\yolov5v6_bytetrack\weights\yolov5p34.pt", type=str, help="ckpt for eval")
+    parser.add_argument("-c", "--ckpt", default=r"../weights/best.pt", type=str, help="ckpt for eval")
     parser.add_argument(
         "--device",
         default="gpu",
         type=str,
         help="device to run our model, can either be cpu or gpu",
     )
-    parser.add_argument("--num_classes", type=int, default=2, help="number of classes")
+    parser.add_argument("--num_classes", type=int, default=1, help="number of classes")
     parser.add_argument("--conf", default=0.1, type=float, help="test conf")
-    parser.add_argument("--nms", default=0.45, type=float, help="test nms threshold")
+    parser.add_argument("--nms", default=0.4, type=float, help="test nms threshold")
     parser.add_argument("--tsize", default=(608, 1088), type=tuple, help="test image size")
+    # parser.add_argument("--tsize", default=(640, 640), type=tuple, help="test image size")
     parser.add_argument(
         "--fp16",
         dest="fp16",
@@ -137,14 +138,14 @@ class Predictor(object):
         self.test_size = test_size
         self.device = device
         self.fp16 = fp16
-        if trt_file is not None:
-            from torch2trt import TRTModule
-
-            model_trt = TRTModule()
-            model_trt.load_state_dict(torch.load(trt_file))
-
-            x = torch.ones(1, 3, test_size[0], test_size[1]).cuda()
-            self.model(x)
+        # if trt_file is not None:
+        #     from torch2trt import TRTModule
+        #
+        #     model_trt = TRTModule()
+        #     model_trt.load_state_dict(torch.load(trt_file))
+        #
+        #     x = torch.ones(1, 3, test_size[0], test_size[1]).cuda()
+        #     self.model(x)
 
     def inference(self, img, timer):
         """img为图片地址， timer为计时器
@@ -417,8 +418,9 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         online_scores.append(t.score)
                 results.append((frame_id + 1, online_tlwhs, online_ids, online_scores))
                 timer.toc()
-                online_im = plot_tracking(img_info['raw_img'], online_tlwhs, online_ids, frame_id=frame_id + 1,
-                                          fps=1. / timer.average_time)
+                # online_im = plot_tracking(img_info['raw_img'], online_tlwhs, online_ids, frame_id=frame_id + 1,fps=1. / timer.average_time)
+                online_im = plot_tracking(img_info['raw_img'], online_tlwhs, online_ids, frame_id=frame_id + 1)
+
             else:
                 timer.toc()
                 online_im = img_info['raw_img']

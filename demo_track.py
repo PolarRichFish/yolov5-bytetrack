@@ -123,14 +123,14 @@ class Predictor(object):
         self.test_size = test_size
         self.device = device
         self.fp16 = fp16
-        if trt_file is not None:
-            from torch2trt import TRTModule
-
-            model_trt = TRTModule()
-            model_trt.load_state_dict(torch.load(trt_file))
-
-            x = torch.ones(1, 3, test_size[0], test_size[1]).cuda()
-            self.model(x)
+        # if trt_file is not None:
+        #     from torch2trt import TRTModule
+        #
+        #     model_trt = TRTModule()
+        #     model_trt.load_state_dict(torch.load(trt_file))
+        #
+        #     x = torch.ones(1, 3, test_size[0], test_size[1]).cuda()
+        #     self.model(x)
 
     def inference(self, img, timer):
         img_info = {"id": 0}
